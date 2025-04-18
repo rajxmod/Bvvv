@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberCloak Timer with History</title>
+  <style>
+    /* CyberCloak Theme - Dark and Futuristic */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      /* Updated background image */
+      background: url('https://i.postimg.cc/HnTxKNvz/IMG-20250418-194236-560.jpg') no-repeat center center fixed;
+      background-size: cover;  /* Ensures the image covers the screen */
+      background-position: center;  /* Centers the image */
+      background-repeat: no-repeat;  /* Prevents the image from repeating */
+      color: #00d1ff;  /* Neon blue */
+      text-align: center;
+      position: relative;
+    }
+    /* Dark overlay with a subtle digital pattern */
+    body::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* Ensure content appears above the overlay */
+    * {
+      position: relative;
+      z-index: 1;
+    }
+    /* CyberCloak Header */
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #00d1ff;
+      text-shadow: 0 0 8px #00d1ff, 0 0 16px #00d1ff;
+    }
+    /* Content boxes with digital neon glow */
+    #textview1, #textview3 {
+      font-size: 20px;
+      margin: 20px auto;
+      padding: 15px;
+      border: 2px solid #00d1ff;
+      width: 80%;
+      background: rgba(0, 0, 0, 0.85);
+      box-shadow: 0 0 12px #00d1ff;
+      color: #e0e0e0;
+    }
+    /* CyberCloak Button */
+    button {
+      background: linear-gradient(45deg, #005bb5, #00d1ff);
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 10px;
+      border-radius: 5px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px #00d1ff;
+    }
+    /* History container */
+    #historyContainer {
+      margin-top: 30px;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid #00d1ff;
+      padding: 15px;
+      box-shadow: 0 0 12px #00d1ff;
+      color: #e0e0e0;
+    }
+    #historyContainer h2 {
+      margin-top: 0;
+      color: #00d1ff;
+      text-shadow: 0 0 6px #00d1ff;
+    }
+    #historyList {
+      list-style: none;
+      padding-left: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    #historyList li {
+      border-bottom: 1px solid #005bb5;
+      padding: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- CyberCloak Header -->
+  <h1>MADE BY 𝐤𝐚𝐢𝐥𝐚𝐬𝐡 𝐦𝐨𝐝</h1>
+  
+  <div id="textview1">Loading...</div>
+  <button onclick="generateRandomResult()">Generate Result</button>
+  <div id="textview3"></div>
+  
+  <!-- History Container -->
+  <div id="historyContainer">
+    <h2>Last 10 Results</h2>
+    <ul id="historyList"></ul>
+  </div>
+  
+  <script>
+    // Timer Logic: Updates TextView1 with a period string.
+    // The period is built from the current date and the elapsed minutes since 5:29.
+    function updateTextView1() {
+      let now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      let seconds = now.getSeconds();
+      
+      let startHour = 5, startMinute = 29;
+      let elapsedMinutes = (hours * 60 + minutes) - (startHour * 60 + startMinute);
+      if (elapsedMinutes < 0) elapsedMinutes = 0;
+      
+      let formattedDate = now.getFullYear().toString() +
+                          ("0" + (now.getMonth() + 1)).slice(-2) +
+                          ("0" + now.getDate()).slice(-2);
+      
+      // The period number is a fixed prefix with the elapsed minutes.
+      let periodNumber = "100001" + ("0000" + elapsedMinutes).slice(-4);
+      let newTextView1Value = formattedDate + periodNumber;
+      
+      let textview1 = document.getElementById("textview1");
+      if (textview1.innerText !== newTextView1Value) {
+        textview1.innerText = newTextView1Value;
+        // Reset lastGeneratedResult to allow a new result for the new period.
+        lastGeneratedResult = null;
+      }
+    }
+    setInterval(updateTextView1, 1000); // Update every second
+    
+    // Random Result Generator Logic
+    let lastGeneratedResult = null;
+    const results = [
+      "SMALL 6/8",
+      "SMALL 5/7",
+      "SMALL 8/9",
+      "BIGG 1/3",
+      "BIGG 2/4",
+      "BIGG 0/1"
+    ];
+    
+    // History array to store the last 10 entries
+    let history = [];
+    
+    function generateRandomResult() {
+      // Generate a new result only if one hasn't been generated for the current period.
+      if (lastGeneratedResult !== null) {
+        return;
+      }
+      let textview3 = document.getElementById("textview3");
+      let newResult = results[Math.floor(Math.random() * results.length)];
+      lastGeneratedResult = newResult;
+      textview3.innerText = newResult;
+      
+      // Get the current period from textview1 and extract its last 3 digits.
+      let currentPeriod = document.getElementById("textview1").innerText;
+      let lastThree = currentPeriod.slice(-3);
+      
+      // Add to history as "XYZ: Result"
+      let historyEntry = `${lastThree}: ${newResult}`;
+      addResultToHistory(historyEntry);
+    }
+    
+    // Function to add a result to the history array and update the display (max 10 items)
+    function addResultToHistory(entry) {
+      history.push(entry);
+      if (history.length > 10) {
+        history.shift(); // Remove the oldest entry if over 10
+      }
+      updateHistoryDisplay();
+    }
+    
+    // Update the history display list on the page
+    function updateHistoryDisplay() {
+      const historyList = document.getElementById("historyList");
+      historyList.innerHTML = ""; // Clear the current list
+      
+      // Display history in reverse order (most recent first)
+      for (let i = history.length - 1; i >= 0; i--) {
+        const li = document.createElement("li");
+        li.innerText = history[i];
+        historyList.appendChild(li);
+      }
+    }
+  </script>
+</body>
+</html>
